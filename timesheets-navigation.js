@@ -27,7 +27,9 @@
  * last change : 2011-03-30
  */
 
-(function(){
+(function(){  
+  
+var bindings = [];
 
 /*****************************************************************************\
 |                                                                             |
@@ -49,59 +51,69 @@ function bindNavControls(timeContainer, navigation) {
   var slideshow = timeContainer.target; // works fine with inline timing but...
   if (!slideshow) // ...sometimes the timeContainer is defined in a timesheet
     slideshow = timeContainer.timeNodes[0].target.parentNode;
+    
+  var handleKeyboard = function(e) {
+      var index = timeContainer.currentIndex;     // index of the current slide
+      var count = timeContainer.timeNodes.length; // number of slides
+      var slide = timeContainer.timeNodes[index]; // current slide
+      switch(e.keyCode) {
+        case 32: // spacebar => next/prev slide
+          EVENTS.preventDefault(e);
+          if (e.shiftKey)
+            timeContainer.selectIndex(index - 1);
+          else
+            timeContainer.selectIndex(index + 1);
+          break;
+        case 35: // end key => last slide
+          EVENTS.preventDefault(e);
+          timeContainer.selectIndex(count - 1);
+          break;
+        case 36: // home key => first slide
+          EVENTS.preventDefault(e);
+          timeContainer.selectIndex(0);
+          break;
+        case 37: // left arrow key => previous slide
+          EVENTS.preventDefault(e);
+          timeContainer.selectIndex(index - 1);
+          break;
+        case 38: // up arrow key => restart current slide
+          EVENTS.preventDefault(e);
+          slide.reset();
+          slide.show();
+          break;
+        case 39: // right arrow key => next slide
+          EVENTS.preventDefault(e);
+          timeContainer.selectIndex(index + 1);
+          break;
+        case 40: // down arrow key => click on current slide
+          EVENTS.preventDefault(e);
+          EVENTS.trigger(slide.target, "click");
+          break;
+        default:
+          break;
+      }
+  };
 
   // keyboard events: http://unixpapa.com/js/key.html
-  if (hasControl("arrows")) EVENTS.bind(document, "keydown", function(e) {
-    var index = timeContainer.currentIndex;     // index of the current slide
-    var count = timeContainer.timeNodes.length; // number of slides
-    var slide = timeContainer.timeNodes[index]; // current slide
-    switch(e.keyCode) {
-      case 32: // spacebar => next/prev slide
-        EVENTS.preventDefault(e);
-        if (e.shiftKey)
-          timeContainer.selectIndex(index - 1);
-        else
-          timeContainer.selectIndex(index + 1);
-        break;
-      case 35: // end key => last slide
-        EVENTS.preventDefault(e);
-        timeContainer.selectIndex(count - 1);
-        break;
-      case 36: // home key => first slide
-        EVENTS.preventDefault(e);
-        timeContainer.selectIndex(0);
-        break;
-      case 37: // left arrow key => previous slide
-        EVENTS.preventDefault(e);
-        timeContainer.selectIndex(index - 1);
-        break;
-      case 38: // up arrow key => restart current slide
-        EVENTS.preventDefault(e);
-        slide.reset();
-        slide.show();
-        break;
-      case 39: // right arrow key => next slide
-        EVENTS.preventDefault(e);
-        timeContainer.selectIndex(index + 1);
-        break;
-      case 40: // down arrow key => click on current slide
-        EVENTS.preventDefault(e);
-        EVENTS.trigger(slide.target, "click");
-        break;
-      default:
-        break;
-    }
-  });
-
-  // mouse clicks: http://unixpapa.com/js/mouse.html
-  if (hasControl("click")) EVENTS.bind(slideshow, "mousedown", function(event) {
+  if (hasControl("arrows")) {
+    EVENTS.bind(document, "keydown", handleKeyboard);
+    bindings.push([document, "keydown", handleKeyboard]);
+  }
+                                                               
+  var handleClick = function(event) {
     // IE doesn't support event.which, relying on event.button instead
     var button = event.which || ([0,1,3,0,2])[event.button];
     if (button == 1)      // left click => next slide
       timeContainer.selectIndex(timeContainer.currentIndex + 1);
     else if (button == 2) // middle click => previous slide
       timeContainer.selectIndex(timeContainer.currentIndex - 1);
-  });
+  };
+  
+  // mouse clicks: http://unixpapa.com/js/mouse.html
+  if (hasControl("click")) {    
+    EVENTS.bind(slideshow, "mousedown", handleClick);
+    bindings.push([slideshow, "mousedown", handleClick]);
+  }
 
   // mouse scroll: http://adomas.org/javascript-mouse-wheel/
   if (hasControl("scroll")) {
@@ -143,19 +155,30 @@ function bindNavControls(timeContainer, navigation) {
       });
     }
   }
-}
+}       
 
-EVENTS.onSMILReady(function() {
-  // activate all navigation bindings
-  var containers = document.getTimeContainersByTagName("*");
-  for (var i = 0; i < containers.length; i++) {
-    // parse the "navigation" attribute and get the target element
-    // (works with "navigation", "data-navigation", "smil:navigation" and so on)
-    var navigation = containers[i].parseAttribute("navigation");
-    if (navigation) {
-      bindNavControls(containers[i], navigation);
-    }
+document.bindNavControls = function (node, navigation) {
+  bindNavControls(node, navigation);  
+}  
+
+document.unbindNavControls = function (node, navigation) {
+  var cur;
+  while (cur = bindings.pop()) {
+    EVENTS.unbind(cur[0], cur[1], cur[2]);
   }
-});
+}  
+
+// EVENTS.onSMILReady(function() {
+//   // activate all navigation bindings
+//   var containers = document.getTimeContainersByTagName("*");
+//   for (var i = 0; i < containers.length; i++) {
+//     // parse the "navigation" attribute and get the target element
+//     // (works with "navigation", "data-navigation", "smil:navigation" and so on)
+//     var navigation = containers[i].parseAttribute("navigation");
+//     if (navigation) {
+//       bindNavControls(containers[i], navigation);
+//     }
+//   }
+// });
 
 })();

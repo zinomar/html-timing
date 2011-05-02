@@ -618,11 +618,12 @@ function checkHash() {
       targetElement.removeAttribute("tabIndex");
   } catch(e) {}
 }
-EVENTS.onSMILReady(function() {
-  consoleLog("SMIL data parsed, starting 'hashchange' event listener.");
-  checkHash(); // force to check once at startup
-  EVENTS.onHashChange(checkHash);
-});
+
+// EVENTS.onSMILReady(function() {
+//   consoleLog("SMIL data parsed, starting 'hashchange' event listener.");
+//   checkHash(); // force to check once at startup
+//   EVENTS.onHashChange(checkHash);
+// });
 
 // ===========================================================================
 // Find all <audio|video> elements in the current document
@@ -850,11 +851,11 @@ function parseAllTimeContainers() {
 // ===========================================================================
 // Startup: get all media elements first, then all time containers
 // ===========================================================================
-EVENTS.onDOMReady(function() {
-  consoleLog("SMIL/HTML Timing: startup");
-  EVENTS.onMediaReady(parseAllTimeContainers);
-  parseAllMediaElements();
-});
+// EVENTS.onDOMReady(function() {
+//   consoleLog("SMIL/HTML Timing: startup");
+//   EVENTS.onMediaReady(parseAllTimeContainers);
+//   parseAllMediaElements();
+// });
 
 
 /*****************************************************************************\
@@ -935,7 +936,13 @@ function smilInternalTimer(timerate) {
     paused = true;
     self.onTimeUpdate();
     //consoleLog("stopped: " + timerID);
-  };
+  };      
+  this.erase = function() {
+    if (timerID) {
+      clearInterval(timerID);
+      timerID = null;
+    }
+  };  
 }
 
 function _smilExternalTimer(mediaPlayerNode) {
@@ -997,7 +1004,10 @@ function _smilExternalTimer(mediaPlayerNode) {
     if (mediaPlayerAPI.removeEventListener) // !OLDIE
       mediaPlayerAPI.removeEventListener("timeupdate", self.onTimeUpdate, false);
     //mediaPlayerNode.currentTime = 0;
-  };
+  };  
+  this.erase = function() {
+    // FIXME: to be done
+  };  
 }
 function smilExternalTimer(mediaPlayerNode) {
   var self = this;
@@ -1116,7 +1126,8 @@ smilTimeItem.prototype.parseTime = function(timeStr) {
   } else return timeStr; // unsupported time format -- maybe a DOM event?
                          // note that isNaN("string") returns true
 };
-smilTimeItem.prototype.parseEvent = function(eventStr, callback) { // XXX to be removed
+smilTimeItem.prototype.parseEvent = function(eventStr, callback, memo) { // XXX to be removed
+  var key;   
   if (!eventStr || !eventStr.length) return null;
 
   // TODO: look for "+" in eventStr and handle the time offset
@@ -1130,9 +1141,13 @@ smilTimeItem.prototype.parseEvent = function(eventStr, callback) { // XXX to be 
     target = this.parentTarget;
     evt    = eventStr;
   }
-  if (target)
+  if (target) {
     //EVENTS.bind(target, evt, function() { callback(); });
     EVENTS.bind(target, evt, callback);
+    if (memo) {
+      memo.push([target, evt, callback]);
+    }
+  }
   return target;
 };
 smilTimeItem.prototype.parseEvents = function(eventStr, callback) {
@@ -1312,8 +1327,7 @@ smilTimeItem.prototype.dispatchEvent = function(eventType) {
   EVENTS.trigger(this.target, eventType);
   if (func)
     func.call(this.target);
-};
-
+};     
 // Constructor: should not be called directly (see smilTimeElement)
 // unless you just want to check SMIL attributes.
 function smilTimeItem(domNode, parentNode, targetNode) {
@@ -1426,8 +1440,17 @@ function smilTimeItem(domNode, parentNode, targetNode) {
     self.removeEventListener(endEvents, onendListener);
     //consoleLog("time node: " + self.getNode().nodeName + "/" + self.timeAction + " -- " + state);
     //if (self.parentNode.timeContainer == "excl") consoleLog("reset");
+  };   
+  this.unsubscribeEvents = function () { 
+    if (beginEvents.length > 0) { 
+      consoleLog("unsubscribe " + beginEvents.length + " begin event(s) on " + ((this.target) ? this.target.id : ''));
+      self.removeEventListener(beginEvents, onbeginListener);
+    }
+    if (endEvents.length > 0) { 
+      consoleLog("unsubscribe " + endEvents.length + " end event(s)" + ((this.target) ? this.target.id : ''));
+      self.removeEventListener(endEvents, onendListener);
+    }
   };
-
   // attach this object to the target element
   if (targetNode && (targetNode != domNode)) { // timesheet item
     // store the timesheet item reference in the 'extTiming' property
@@ -1438,9 +1461,12 @@ function smilTimeItem(domNode, parentNode, targetNode) {
   } else if (this.target) { // inline timing
     // store the object reference in the 'timing' property
     domNode.timing = this;
-  }
+  }  
 }
-
+smilTimeItem.prototype.erase = function() {                              
+  // consoleLog('smilTimeItem on ' + ((this.target) ? this.target.id : ''));
+  this.unsubscribeEvents();
+}
 
 /*****************************************************************************\
 |                                                                             |
@@ -1628,7 +1654,7 @@ smilTimeContainer_generic.prototype.selectIndex = function(index) {
 smilTimeContainer_generic.prototype.selectItem = function(item) {
   var index = this.timeNodes.indexOf(item);
   this.selectIndex(index);
-};
+};                         
 
 // Constructor: *CANNOT* be called directly, use smilTimeElement instead.
 function smilTimeContainer_generic(timeContainerNode, parentNode, timerate) {
@@ -1671,6 +1697,7 @@ function smilTimeContainer_generic(timeContainerNode, parentNode, timerate) {
   }
 
   // XXX it would be simpler (?) to inherit from the timer
+  this.timer          = timer; // rembers it to erase it
   this.isPaused       = timer.isPaused;
   this.getCurrentTime = timer.getTime;
   this.setCurrentTime = timer.setTime;
@@ -1752,12 +1779,29 @@ function smilTimeContainer_generic(timeContainerNode, parentNode, timerate) {
     self.addEventListener(beginEvents, onbeginListener);
     self.removeEventListener(endEvents, onendListener);
     this.currentIndex = -1;
+  };      
+  this.unsubscribeEvents = function () {
+    self.removeEventListener(beginEvents, onbeginListener);
+    self.removeEventListener(endEvents, onendListener);
   };
-
   // keep a reference of this timeContainer
   TIMECONTAINERS.push(this);
-}
+}           
 
+// Erases generic time container 
+// transmis call to all children time nodes
+smilTimeContainer_generic.prototype.erase = function() {
+  if (this.timer) {
+      this.timer.erase();
+  }
+  // TIMECONTAINERS.remove(this);
+  var i, segment;
+  for (i = 0; i < this.timeNodes.length; i++) {
+    segment = this.timeNodes[i];
+    segment.erase(); // recurse (see smilTimeElement)
+  }  
+  this.timeNodes = null;  
+};
 
 /*****************************************************************************\
 |                                                                             |
@@ -1926,10 +1970,14 @@ smilTimeContainer_excl.prototype.onTimeUpdate = function() {
     consoleLog("excl index = " + this.currentIndex);
     this.selectIndex(this.currentIndex + 1);
   }
-};
+};    
+
+smilTimeContainer_excl.prototype.erase = function() {
+  // tbd
+}  
 
 // Constructor (should not be called directly, see smilTimeElement)
-function smilTimeContainer_excl(domNode, parentNode, timerate) {
+function smilTimeContainer_excl(domNode, parentNode, timerate) {   
   this.computeTimeNodes = smilTimeContainer_excl.prototype.computeTimeNodes;
   this.onTimeUpdate     = smilTimeContainer_excl.prototype.onTimeUpdate;
   smilTimeContainer_generic.call(this, domNode, parentNode, timerate);
@@ -1947,13 +1995,13 @@ function smilTimeContainer_excl(domNode, parentNode, timerate) {
   this.first = this.parseEvent(this.parseAttribute("first"), function() {
     self.selectIndex(0);
   });
-  this.prev  = this.parseEvent(this.parseAttribute("prev"),  function() {
+  this.prev = this.parseEvent(this.parseAttribute("prev"),  function() {
     self.selectIndex(self.currentIndex - 1);
   });
-  this.next  = this.parseEvent(this.parseAttribute("next"),  function() {
+  this.next = this.parseEvent(this.parseAttribute("next"),  function() {
     self.selectIndex(self.currentIndex + 1);
   });
-  this.last  = this.parseEvent(this.parseAttribute("last"),  function() {
+  this.last = this.parseEvent(this.parseAttribute("last"),  function() {
     self.selectIndex(self.timeNodes.length - 1);
   });
   this.checkIndex();
@@ -2073,7 +2121,19 @@ smilTimeContainer_seq.prototype.onTimeUpdate = function() {
   else if ((this.currentIndex < this.timeNodes.length - 1)
       && isNaN(this.timeNodes[this.currentIndex + 1].time_in))
     this.next();
-};
+};           
+                 
+// Unsubscribes first, next, prev and last event handlers
+smilTimeContainer_seq.prototype.erase = function() {
+  consoleLog("unsubscribing seq " + this.bindings.length);
+  var i, evDescr;
+  for (i = 0; i < this.bindings.length; i++) {
+    evDescr = this.bindings[i];
+    if (evDescr) {
+      EVENTS.unbind(evDescr[0], evDescr[1], evDescr[2]);
+    }
+  }
+}  
 
 // Constructor (should not be called directly, see smilTimeElement)
 function smilTimeContainer_seq(domNode, parentNode, timerate) {
@@ -2091,21 +2151,21 @@ function smilTimeContainer_seq(domNode, parentNode, timerate) {
   this.selectItem  = smilTimeContainer_generic.prototype.selectItem;
 
   // lazy user interaction (should be specific to <excl> but heck...)
+  this.bindings = [];
   this.first = this.parseEvent(this.parseAttribute("first"), function() {
     self.selectIndex(0);
-  });
-  this.prev  = this.parseEvent(this.parseAttribute("prev"),  function() {
+  }, this.bindings);
+  this.prev = this.parseEvent(this.parseAttribute("prev"),  function() {
     self.selectIndex(self.currentIndex - 1);
-  });
-  this.next  = this.parseEvent(this.parseAttribute("next"),  function() {
+  }, this.bindings);
+  this.next = this.parseEvent(this.parseAttribute("next"),  function() {
     self.selectIndex(self.currentIndex + 1);
-  });
-  this.last  = this.parseEvent(this.parseAttribute("last"),  function() {
+  }, this.bindings);
+  this.last = this.parseEvent(this.parseAttribute("last"),  function() {
     self.selectIndex(self.timeNodes.length - 1);
-  });
+  }, this.bindings);
   this.checkIndex();
-}
-
+}           
 
 /*****************************************************************************\
 |                                                                             |
@@ -2148,6 +2208,26 @@ function smilTimeElement(domNode, parentNode, targetNode, timerate) {
     //this.getNode().timing = this;
   // define show/hide/reset here rather than in
   // smilTimeItem/smilTimeContainer_generic?
+}    
+
+smilTimeElement.prototype.erase = function() {  
+  var type = (this.timeContainer) ? this.timeContainer : "leaf";
+  var id = (this.target && this.target.hasAttribute('id')) ? " - " + this.target.id : '';
+  consoleLog("erasing [" + type + "]" + id);    
+  smilTimeItem.prototype.erase.call(this);
+  smilTimeContainer_generic.prototype.erase.call(this);
+  switch (this.timeContainer) {
+    case "par":
+      break;
+    case "seq":
+      smilTimeContainer_seq.prototype.erase.call(this);
+      break;
+    case "excl":
+      smilTimeContainer_excl.prototype.erase.call(this);
+      break;
+    default: // time item
+      break;
+  }
 }
 
 /*****************************************************************************\
@@ -2205,6 +2285,23 @@ document.getTimeContainersByTagName = function(tagName) {
   }
   contNodes.item = function(index) { return contNodes[index]; };
   return contNodes;
-};
+};       
+
+document.installHashTracker = function () {
+  EVENTS.onSMILReady(function() {
+    consoleLog("SMIL data parsed, starting 'hashchange' event listener.");
+    checkHash(); // force to check once at startup
+    EVENTS.onHashChange(checkHash);
+  })  
+}       
+
+document.autoStartSlideShow = function () {
+  // document.installHashTracker();
+  EVENTS.onDOMReady(function() {
+    consoleLog("SMIL/HTML Timing: startup");
+    EVENTS.onMediaReady(parseAllTimeContainers);
+    parseAllMediaElements();
+  }); 
+}
 
 })();
