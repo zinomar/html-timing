@@ -1,0 +1,41 @@
+/* collapsable lists */
+div.outline   li,
+div.accordion li {
+  cursor: pointer;
+/*  list-style-type: circle; */
+}
+div.outline   li,
+div.accordion li {
+  cursor: pointer;
+}
+.outline   li:hover,
+.accordion li:hover {
+/*  text-decoration: underline;*/
+}
+.outline   li ol,
+.outline   li ul,
+.outline   li p,
+.accordion li ol,
+.accordion li ul,
+.accordion li p {
+  display: none;
+}
+.outline   li.active ol,
+.outline   li.active ul,
+.outline   li.active p,
+.accordion li.active ol,
+.accordion li.active ul, 
+.accordion li.active p {
+  display: block;
+}
+/* not used yet */
+.outline li.expanded.active ol,
+.outline li.expanded.active ul {
+  display: none;
+}
+.outline li.expanded ol,
+.outline li.expanded ul {
+  display: block;
+}
+
+

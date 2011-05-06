@@ -1,0 +1,234 @@
+<slideshow>
+  <header id="section1" data-dur="5">
+    <h1> Thématique 2 de recherche </h1>
+    <p> Moteur d’édition et de publication HTML de contenus WebRadio orienté « esthétique » </p>
+    <ol>
+      <li><a href="#intro">Contexte</a></li>
+      <li><a href="#publications">Contribution INRIA/WAM</a></li>
+      <li><a href="#resultats">Résultats</a></li>
+      <li><a href="#conclusion">Suite</a></li>
+    </ol>
+  </header>
+  <div id="intro" class="outline" data-dur="12">
+    <h2> Contexte </h2>
+    <p>Étapes de travail de l’équipe INRIA/WAM dans C2M : </p>
+    <ol>
+      <li>
+        <span><strong>publication multimédia sur le Web :</strong></span>
+        <ul>
+          <li>expertise WAM dans le Web multimédia (SMIL) </li>
+          <li>opportunité technologique : HTML5, CSS3 </li>
+          <li>⇒ recrutement d’un ingénieur « R&amp;D web » </li>
+        </ul>
+      </li>
+      <li>
+        <span>implémentation <strong>SMIL-Timesheets :</strong></span>
+        <p>interpréteur de feuilles de synchronisation temporelle pour les navigateurs web </p>
+      </li>
+      <li>
+        <span>validation dans l’application <strong>WebRadio</strong> de l’INA</span>
+      </li>
+      <li>
+        <span>développement d’un <strong>outil auteur</strong> pour la publication multimédia</span>
+      </li>
+    </ol>
+  </div>
+  <div id="objectifs" class="accordion" data-dur="12">
+    <h2>Objectifs WebRadio</h2>
+    <ul>
+      <li>
+        <span>post-édition</span>
+        <p>enrichissements esthétiques, synchronisation fine, interactions utilisateur… </p>
+      </li>
+      <li>
+        <span>efficacité </span>
+        <p>allier la productivité d’une approche documentaire SCENARI et la souplesse d’un
+						éditeur dédié « wysiwyg » </p>
+      </li>
+      <li>
+        <span>performance </span>
+        <p>utiliser au mieux les possibilités du navigateur web, y compris sur les plate-formes
+						mobiles (où Flash™ est peu ou pas supporté) </p>
+      </li>
+    </ul>
+  </div>
+  <header id="section2" data-dur="5">
+    <h1> Thématique 2 de recherche </h1>
+    <p> Moteur d’édition et de publication HTML de contenus WebRadio orienté « esthétique » </p>
+    <ol>
+      <li><a href="#intro">Contexte</a></li>
+      <li><a href="#publications">Contribution INRIA/WAM</a></li>
+      <li><a href="#resultats">Résultats</a></li>
+      <li><a href="#conclusion">Suite</a></li>
+    </ol>
+  </header>
+  <div id="publications" class="progressive">
+    <h2>Format de publication</h2>
+    <p>Objectif : tirer parti de la publication Web en utilisant exclusivement des <strong>formats
+    			déclaratifs standard</strong>.</p>
+    <ol>
+      <li>
+        <span>Structuration : </span>
+        <p>sémantique des contenus et de la navigation</p>
+      </li>
+      <li>
+        <span>Accessibilité : </span>
+        <p>contenus alternatifs, feuilles de style, navigation</p>
+      </li>
+      <li>
+        <span>Portabilité : </span>
+        <ul>
+          <li>code léger (&lt; 10 Ko), adaptabilité des médias et des présentations</li>
+          <li>⇒ publications multi-terminaux (PC, mobiles)</li>
+        </ul>
+      </li>
+      <li>
+        <span><strong>Réutilisabilité :</strong></span>
+        <ul>
+          <li>contenus, feuilles de style et de synchronisation</li>
+          <li>+ pérennité assurée par l’utilisation de standards W3C</li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+  <div id="timeController" class="incremental" data-dur="20">
+    <h2>timeController</h2>
+    <p>= composant pour la navigation temporelle</p>
+    <ul>
+      <li>
+        <span>contrôle du temps &lt;-&gt; table des matières </span>
+        <p>interface de contrôle de conteneurs temporels SMIL</p>
+      </li>
+      <li>
+        <span>plusieurs cas d’utilisation expérimentés : </span>
+        <p>annotations de média continus, présentations avec/sans vidéo…</p>
+      </li>
+      <li>
+        <span>microformat « timeController » : </span>
+        <ul>
+          <li>le rôle de chaque élément est défini par une classe HMTL </li>
+          <li>utilisation de CSS pour la présentation visuelle </li>
+          <li>bibliothèque JS pour la timeline enrichie et les comportements associés aux
+							contrôles </li>
+        </ul>
+      </li>
+    </ul>
+    <p>+ brique de base pour les outils d’édition </p>
+  </div>
+  <div id="benefits" class="outline" data-dur="12">
+    <h2>Avancées</h2>
+    <ul>
+      <li>
+        <span>accessibilité </span>
+        <p>navigation au clavier, liens temporels </p>
+      </li>
+      <li>
+        <span>référencement </span>
+        <p>contenu 100% déclaratif + structures de navigation </p>
+      </li>
+      <li>
+        <span>performances </span>
+        <p>charge CPU, temps de chargement, fluidité </p>
+      </li>
+      <li>
+        <span>support </span>
+        <p>une même page peut être jouée sur toutes les plateformes (CSS media queries,
+						fallbacks Flash…) </p>
+      </li>
+      <li>
+        <span><strong>évolutivité</strong></span>
+        <p>tout est modifiable et réutilisable : contenu, style, synchronisation </p>
+      </li>
+    </ul>
+  </div>
+  <header id="section3" data-dur="5">
+    <h1> Thématique 2 de recherche </h1>
+    <p> Moteur d’édition et de publication HTML de contenus WebRadio orienté « esthétique » </p>
+    <ol>
+      <li><a href="#intro">Contexte</a></li>
+      <li><a href="#publications">Contribution INRIA/WAM</a></li>
+      <li><a href="#resultats">Résultats</a></li>
+      <li><a href="#conclusion">Suite</a></li>
+    </ol>
+  </header>
+  <div id="resultats" class="outline" data-dur="12">
+    <h2>Résultats</h2>
+    <ul>
+      <li>
+        <span>une réponse aux objectifs de <strong>publication multimédia</strong> sur le
+						Web :</span>
+        <ul>
+          <li>exploitation judicieuse des technologies existantes </li>
+          <li>portabilité assurée avec les « vieux » navigateurs </li>
+          <li>rendu efficace et de qualité </li>
+        </ul>
+      </li>
+      <li>
+        <span>approche <strong>modulaire</strong> et <strong>extensible</strong> par les
+						auteurs :</span>
+        <ul>
+          <li>mise en œuvre de divers modèles de documents </li>
+          <li>description simplifiée des interactions utilisateur </li>
+          <li>composants d’interface pour la publication et l’édition (cf. timeController) </li>
+        </ul>
+      </li>
+      <li>
+        <span>socle pour l’intégration dans des chaînes de production </span>
+      </li>
+    </ul>
+  </div>
+  <div id="templates" data-dur="12">
+    <h2>Modèles de documents</h2>
+    <p>Modèles issus d’interactions avec les utilisateurs : </p>
+    <ul>
+      <li>
+        <span><strong>INA : documentaires audio/vidéo</strong></span>
+        <p>WebRadio, Grands Entretiens </p>
+      </li>
+      <li>
+        <span>ENS : séminaires enregistrés </span>
+        <p>déploiement similaire pour les projets Fuscia et InterSTICE </p>
+      </li>
+      <li>
+        <span>LIRIS : publication de médias annotés </span>
+      </li>
+      <li>
+        <span>Mozilla : sous-titrage vidéo multilingue </span>
+      </li>
+      <li>
+        <span>+ diverses conférences IT ⇒ <strong>diaporama</strong></span>
+        <p>MozCamp, SVG Open, JDLL, FOSSA, TICE, GirlsInTech, April… </p>
+      </li>
+    </ul>
+  </div>
+  <div id="conclusion" class="progressive" data-dur="12">
+    <h2>Suite de l’activité</h2>
+    <ul>
+      <li>
+        <span><strong>Outils Auteur C2M :</strong> (juin 2011)</span>
+        <ul>
+          <li>module « esthétique » SCENARI/WebRadio</li>
+          <li>éditeur « wysiwyg » de Timesheets </li>
+        </ul>
+      </li>
+      <li>
+        <span>Autres éditeurs : </span>
+        <ul>
+          <li>INRIA : export HTML5 pour <em>LimSee3</em> (SMIL, Java)</li>
+          <li>EPFL : modèles multimédia pour <em>AXEL</em> (XML, web)</li>
+          <li>CEA : module Timesheets pour <em>Jaxe</em> (XML, Java)</li>
+        </ul>
+      </li>
+      <li>
+        <span><strong>Standardisation W3C :</strong></span>
+        <ul>
+          <li>finalisation de la spec SMIL-Timesheets</li>
+          <li>HTML5 ? SVG2 ?</li>
+        </ul>
+      </li>
+      <li>
+        <span>Publications : DocEng 2011… </span>
+      </li>
+    </ul>
+  </div>
+</slideshow>

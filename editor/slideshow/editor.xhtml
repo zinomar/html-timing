@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:xt="http://ns.inria.org/xtiger" xml:lang="en">
+<!-- 
+  Sample presentation
+  
+  played with HTML Timing by Fabien Cazenave
+  edited with AXEL by Stéphane Sire
+    
+   -->
+<head>                                                
+  <!-- Use UTF-8 and avoid the xml protocol declaration at the top for Internet Explorer -->
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=8;" />   
+  <meta name="description" content="AXEL + HTML Timing slide show demonstration" />
+  <meta name="keywords" content="template, XTiger, AXEL, SMIL, HTML Timing" />
+
+  <title>Slideshow demonstration editor</title>
+  
+  <link rel="stylesheet" type="text/css" href="../css/transitions.css"/>  
+  <link rel="stylesheet" type="text/css" href="../css/layout.css" />
+  <link rel="stylesheet" type="text/css" href="../css/slideshow.css" />
+  <link rel="stylesheet" type="text/css" href="../css/effects.css" />
+  
+  <!-- Timesheet -->
+  <link rel="timesheet" type="application/smil+xml" href="slideshow.smil"></link>
+               
+  <!-- HTML Timing lib -->
+  <script type="text/javascript" src="../../timesheets.js"></script>      
+  <script type="text/javascript" src="../../timesheets-navigation.js"></script>  
+  
+  <!-- AXEL lib -->
+  <script type="text/javascript" src="../axel/axel.js"></script>        
+  <link rel="stylesheet" href="../axel/axel.css" type="text/css"></link>
+
+  <script type="text/javascript" src="../editor.js"></script>
+  <script type="text/javascript">
+    xtdom.addEventListener(window, 'load', 
+      function() { 
+        init('slideshow.xhtml', 'sample.xml');
+      }, false);    
+  </script>                         
+</head>
+<body>      
+  
+  <div id="menu">
+    <p>
+      <button id="gotoPlay" onclick="javascript:playOnDemand()">PLAY</button>
+      <button id="gotoEdit" onclick="javascript:editOnDemand()" style="display:none">EDIT</button>    
+      <a href="#content">Goto dump</a>      
+    </p>                                             
+  </div>
+  
+  <!-- Player (initially invisible) -->  
+  <nav id="nav" style="display:none">
+    <button id="first" accesskey="h" title="first slide">        «     </button>
+    <button id="prev"  accesskey="p" title="previous slide"> &lt; prev </button>
+		<button style="width: 50px;" title="ToC"><span id="index"></span>/<span id="count"></span></button>
+    <button id="next"  accesskey="n" title="next slide">     next &gt; </button>
+    <button id="last"  accesskey="l" title="last slide">         »     </button>
+  </nav>
+
+  <div id="slideshow" data-timecontainer="seq"
+                      data-first = "first.click"
+                      data-prev  = "prev.click"
+                      data-next  = "next.click"
+                      data-last  = "last.click" 
+                      style="display:none">
+
+  </div>         
+  
+  <!-- Editor   -->    
+  <div id="editor">    
+    
+    <div id="template">
+      <xt:repeat minOccurs="1" maxOccurs="*" pseudoLabel="header div footer">
+        <xt:use types="t_slide"/>
+      </xt:repeat>   
+    </div>
+  
+    <hr/>
+    <!-- Dump zone (for debug)  -->
+    <div style="font-size: 14px" class="canvas">    
+      <a href="javascript:dump()">DUMP</a>          
+      <pre id="content">  
+      </pre>      
+    </div>   
+  </div>         
+
+  <!-- Buffer zone (to generate the slideshow before pasting it inside the player) -->  
+  <div id="nomansland" style="display: none">
+  </div>     
+</body>
+</html>               

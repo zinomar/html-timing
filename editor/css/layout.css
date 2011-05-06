@@ -1,0 +1,294 @@
+html {
+  background-color: #ddd; /* Opera 10.x doesn't support CSS gradients */
+  background:      linear-gradient(top, black 0%, #eaeaea 50%, white 100%);
+  background:   -o-linear-gradient(top, black 0%, #eaeaea 50%, white 100%);
+  background: -moz-linear-gradient(top, black 0%, #eaeaea 50%, white 100%);
+  background: -webkit-gradient(linear, left top, left bottom, from(black), to(white), color-stop(50%, #eaeaea));  
+  min-height: 100%;
+}
+body {
+  /*
+  width: 80%;
+  max-width: 800px;
+  */
+  position: relative;
+  width: 900px;
+  height: 700px;
+  margin: 30px auto;
+
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 1.8em;
+  /*
+  background-color: white;
+  clear: both;
+  border: 1px solid #aaa;
+  border-radius         : 15px;
+  -o-border-radius      : 15px;
+  -moz-border-radius    : 15px;
+  -webkit-border-radius : 15px;
+  box-shadow         : 0px 1px 10px #888;
+  -o-box-shadow      : 0px 1px 10px #888;
+  -moz-box-shadow    : 0px 1px 10px #888;
+  -webkit-box-shadow : 0px 1px 10px #888;
+  */
+}       
+#menu {       
+  position: fixed;
+  top: 0;
+  left: 0;  
+  right: 0;     
+  z-index: 10;
+  background: black;
+}
+#menu p {    
+  font-size: 14px;  
+  width: 900px;
+  margin: 0 auto;
+  border-bottom: solid 1px white;
+}
+ol, ul {
+  margin-left: 25px;
+}
+li, dt, dd {
+  margin-bottom: 15px;
+}
+li ul, li ol {
+  margin-top: 5px;
+}
+li li {
+  margin-bottom: 5px;
+  font-size: smaller;
+}
+li p:not(.template) {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: smaller !important;
+}
+dt, strong {
+  color: brown;
+}
+p.strong a {
+  color: brown !important;
+}
+div#slideshow {
+  position: relative;
+  overflow-x: hidden;
+  width: 800px;
+  height: 600px;
+  padding: 50px;
+
+  /*
+  margin: 30px auto;
+  width: 80%;
+  max-width: 800px;
+  */
+
+  background-color: white;
+  border: 1px solid #aaa;
+  border-radius         : 15px;
+  -o-border-radius      : 15px;
+  -moz-border-radius    : 15px;
+  -webkit-border-radius : 15px;
+  box-shadow         : 0px 1px 10px #888;
+  -o-box-shadow      : 0px 1px 10px #888;
+  -moz-box-shadow    : 0px 1px 10px #888;
+  -webkit-box-shadow : 0px 1px 10px #888;
+}
+/*
+div#slideshow div,
+div#slideshow pre,
+div#slideshow header {
+  */
+div#slideshow > * {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  width: 800px;
+  height: 600px;
+}
+div#slideshow > pre {
+  top: 0px;
+  left: 0px;
+  width: 860px;
+  height: 680px;
+  margin: 0;
+  padding: 10px;
+  border-left: 20px solid #ddf;
+  background-color: #eee;
+  /* max-height: 20em; */
+  overflow: auto;
+  /*font-size: 0.6em;*/
+  font-size: 16px;
+}
+h1 {
+  text-align: center;
+  font-size: 48px;
+}
+h2 {
+  float: right;
+  min-width: 50%;
+  margin: 0 -70px 10px 100px;;
+  padding: 0 1em;
+  text-align: center;
+  line-height: 150%;
+  text-shadow: 1px 1px 1px gray;
+  color: white;
+  background-color: #743; /* Opera 10.x doesn't support CSS gradients */
+  background:      linear-gradient(left, black 5%, #fa6e12);
+  background:   -o-linear-gradient(left, black 5%, #fa6e12);
+  background: -moz-linear-gradient(left, black 5%, #fa6e12);
+  background: -webkit-gradient(linear, left center, right center, from(black), to(#fa6e12));
+  box-shadow         : -2px 1px 10px #888;
+  -o-box-shadow      : -2px 1px 10px #888;
+  -moz-box-shadow    : -2px 1px 10px #888;
+  -webkit-box-shadow : -2px 1px 10px #888;
+  border-radius         : 0px 10px 10px 100px;
+  -o-border-radius      : 0px 10px 10px 100px;
+  -moz-border-radius    : 0px 10px 10px 100px;
+  -webkit-border-radius : 0px 10px 10px 100px;
+}
+h2 + * {
+  clear: both;
+  padding-top: 1em;
+}
+div#slideshow .strong {
+  color: brown;
+  text-align: center;
+  font-weight: bold;
+}
+h3 {
+  color: brown;
+  margin-top: 2em;
+  font-family: Georgia;
+  font-size: 1.2em;
+  border-bottom: 1px inset brown;
+}
+h4 {
+  font-size: 1em;
+  border-bottom: 1px dashed #cccccc;
+}
+blockquote {
+  margin-left: 1em;
+  padding: 0.5em 1em;
+  background-color: #eee;
+  font-style: italic;
+  box-shadow         : 0px 1px 10px #888;
+  -o-box-shadow      : 0px 1px 10px #888;
+  -moz-box-shadow    : 0px 1px 10px #888;
+  -webkit-box-shadow : 0px 1px 10px #888;
+}
+
+/* IE6 hacks, ignored by other browsers */
+* html h2 {
+  margin-right: 0;
+  margin-right: -0.5em;
+}
+* html div {
+  clear: both;
+}
+
+/* section headers */
+header p {
+  color: brown;
+  text-align: center;
+  margin-bottom: 40px;
+  margin-top: 0;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-shadow         : 1px 1px 1px gray;
+  -o-text-shadow      : 1px 1px 1px gray;
+  -moz-text-shadow    : 1px 1px 1px gray;
+  -webkit-text-shadow : 1px 1px 1px gray;
+}
+header ol {
+  width: 50%;
+  margin: 80px auto;
+}
+header li {
+  opacity: 0.3 !important;
+}
+header li.active {
+  opacity: 1 !important;
+}
+header li a {
+  color: navy !important;
+}
+
+footer {
+  text-align: center;
+  font-style: greater;
+}
+
+/* <seq|excl>-related menu */
+nav {
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  z-index: 1;
+}
+nav button {
+  display: block;
+  cursor: pointer;
+  float: left;
+  /* min-width: 2em; */ /* bugs on IE7 */
+  text-align: center;
+  background-color: #ddf;
+  border: 1px solid #cce;
+  margin: 1px;
+  padding: 1px 4px;
+  user-select         : none;
+  -o-user-select      : none;
+  -moz-user-select    : none;
+  -webkit-user-select : none;
+}
+nav button:hover {
+  background-color: #ccf;
+}
+nav button:first-child {
+  border-top-left-radius         : 1em;
+  -o-border-top-left-radius      : 1em;
+  -moz-border-radius-topleft     : 1em;
+  -webkit-border-top-left-radius : 1em;
+  border-bottom-left-radius         : 1em;
+  -o-border-bottom-left-radius      : 1em;
+  -moz-border-radius-bottomleft     : 1em;
+  -webkit-border-bottom-left-radius : 1em;
+}
+nav button:last-child {
+  border-top-right-radius         : 1em;
+  -o-border-top-right-radius      : 1em;
+  -moz-border-radius-topright     : 1em;
+  -webkit-border-top-right-radius : 1em;
+  border-bottom-right-radius         : 1em;
+  -o-border-bottom-right-radius      : 1em;
+  -moz-border-radius-bottomright     : 1em;
+  -webkit-border-bottom-right-radius : 1em;
+}
+
+/* logos */
+footer#logos p {
+  position: absolute;
+  bottom: 0.5em;
+  left: 1em;
+  margin: 0;
+  padding: 0;
+  z-index: 1;
+}
+footer#logos a img, #slideshow a img {
+  border: none;
+}
+
+/* images */
+#slideshow images {
+  max-height: 480px;
+}
+#markup img {
+  box-shadow         : 0px 1px 10px #000;
+  -o-box-shadow      : 0px 1px 10px #000;
+  -moz-box-shadow    : 0px 1px 10px #000;
+  -webkit-box-shadow : 0px 1px 10px #000;
+  border-radius         : 5px;
+  -o-border-radius      : 5px;
+  -moz-border-radius    : 5px;
+  -webkit-border-radius : 5px;
+}

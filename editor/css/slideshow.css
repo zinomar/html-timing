@@ -1,0 +1,120 @@
+.canvas {       
+	border: solid 1px gray;   
+	margin: 1em 0;
+	position: relative;      
+	background: white;     
+	                       
+	/* from div#slideshow in layout.css */
+	background-color: white;
+  border: 1px solid #aaa;
+  border-radius         : 15px;
+  -o-border-radius      : 15px;
+  -moz-border-radius    : 15px;
+  -webkit-border-radius : 15px;
+  box-shadow         : 0px 1px 10px #888;
+  -o-box-shadow      : 0px 1px 10px #888;
+  -moz-box-shadow    : 0px 1px 10px #888;
+  -webkit-box-shadow : 0px 1px 10px #888;
+} 
+
+.content {
+	padding: 10px;	
+	margin: 0;	      
+	width: 800px;
+	min-height: 600px;
+}
+
+div.slide-type-menu {           
+	font-size: 14px;	
+	position: absolute;
+	top: 5px;
+	left: 5px;
+}
+
+div.repetition-menu {    
+	font-size: 14px;	     
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+
+p.header {   
+	font-size: 14px;
+	margin: 0;   
+	padding: 5px 0 5px 8em;
+	border-bottom: solid 1px black;	
+}     
+
+select.content-choice {
+  width: 50px;
+  float:left;
+  clear: right;
+}    
+
+span.repeat-buttons {
+  float: left;    
+  margin-top: -6px;  
+  min-width: 50px; /* to avoid single + placed at the left */
+}
+
+span.hover-menu, span.repeat-buttons, span.li-repeat-buttons {
+	display: none;
+}
+
+div.content-row-menu:hover > span.repeat-buttons, li:hover > span.li-repeat-buttons, li:hover span.hover-menu {
+	display: inline;
+}   
+
+ul, ol, p {
+	padding: 0;	   
+}   
+
+ul.level1, ol.level1, p.level1 {
+	padding: 0;	                
+	position: relative;
+}            
+
+p.level2 {         
+	margin: 0.5em;
+}
+
+li {
+	margin-bottom: 0.5em;
+}    
+
+li.itemContainer {
+	position: relative;
+}        
+
+span.repeat-buttons-container {
+	position: absolute;
+	right: -2.5em;
+	top: 0;    
+}     
+span.effect {
+  position: absolute;
+  top: 0;
+  width: 9em;
+  font-size: 12px;
+  padding: 0.5em;
+	background-color: white;
+  border: 1px solid #aaa;
+  border-radius         : 15px;
+  -o-border-radius      : 15px;
+  -moz-border-radius    : 15px;
+  -webkit-border-radius : 15px;
+  box-shadow         : 0px 1px 10px #888;
+  -o-box-shadow      : 0px 1px 10px #888;
+  -moz-box-shadow    : 0px 1px 10px #888;
+  -webkit-box-shadow : 0px 1px 10px #888;  
+}          
+ul > span.effect, ol > span.effect {
+  left: -22em;
+}    
+p > span.effect {        
+  left: -20em;
+}    
+ul:hover > span.effect, ol:hover > span.effect, p:hover > span.effect {
+  border: 2px solid black;  
+} 
+      

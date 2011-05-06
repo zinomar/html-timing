@@ -146,13 +146,17 @@ function bindNavControls(timeContainer, navigation) {
   }
 
   // update the hash whenever possible
-  if (hasControl("hash")) {
-    var timeNodes = timeContainer.timeNodes;
+  if (hasControl("hash")) { 
+    var timeNodes = timeContainer.timeNodes;                
+    var handleHash = function() {
+      document.location.hash = "#" + this.id;
+    };
     for (var i = 0; i < timeNodes.length; i++) {
       var target = timeNodes[i].target;
-      if (target.id) EVENTS.bind(target, "begin", function() {
-        document.location.hash = "#" + this.id;
-      });
+      if (target.id) {
+        EVENTS.bind(target, "begin", handleHash);
+        bindings.push([target, "begin", handleHash]);        
+      }
     }
   }
 }       

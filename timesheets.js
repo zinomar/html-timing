@@ -619,11 +619,11 @@ function checkHash() {
   } catch(e) {}
 }
 
-// EVENTS.onSMILReady(function() {
-//   consoleLog("SMIL data parsed, starting 'hashchange' event listener.");
-//   checkHash(); // force to check once at startup
-//   EVENTS.onHashChange(checkHash);
-// });
+EVENTS.onSMILReady(function() {
+  consoleLog("SMIL data parsed, starting 'hashchange' event listener.");
+  checkHash(); // force to check once at startup
+  EVENTS.onHashChange(checkHash);
+});
 
 // ===========================================================================
 // Find all <audio|video> elements in the current document
@@ -1531,7 +1531,9 @@ smilTimeContainer_generic.prototype.parseTimeNodes = function() {
       else {
         targets.push(segment);
       }
-      // push all time nodes
+      // push all time nodes 
+      // FIXME: would be nice to order timeNodes in document order
+      // while merging all the targets from all the items ???
       for (var j = 0; j < targets.length; j++) {
         var target = targets[j];
         var node = null;
@@ -1669,6 +1671,8 @@ function smilTimeContainer_generic(timeContainerNode, parentNode, timerate) {
   // http://www.w3.org/TR/SMIL/smil-timing.html#Timing-repeatSyntax
   this.repeatCount = this.parseAttribute("repeatCount", 1);
   this.repeatDur   = this.parseAttribute("repeatDur", NaN);
+  
+  consoleLog('repeatCount = ' + this.repeatCount);
 
   // parse child nodes and compute start/stop times whenever possible
   consoleLog("  initializing: " + this.timeContainer + " (" + this.getNode().nodeName + ")");
@@ -2246,6 +2250,10 @@ smilTimeElement.prototype.erase = function() {
 
 document.createTimeContainer = function(domNode, parentNode, targetNode, timerate) {
   return new smilTimeElement(domNode, parentNode, targetNode, timerate);
+};
+
+document.applyTimeSheet = function(tsNode) {
+  parseTimesheetNode(tsNode);
 };
 
 document.getTimeNodesByTarget = function(node) {

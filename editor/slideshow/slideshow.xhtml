@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:xt="http://ns.inria.org/xtiger" xml:lang="en">
+<head>                  
+  <!-- Use UTF-8 and avoid the xml protocol declaration at the top for Internet Explorer -->
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=8;" />   
+  <meta name="description" content="XTiger XML document template" />
+  <meta name="keywords" content="template, XTiger" />
+
+  <title>Slides</title>
+
+  <xt:head version="1.1" templateVersion="1.0" label="slideshow">    
+  
+    <xt:component name="t_slide">
+      <div class="canvas">
+        <div class="slide-type-menu">
+          <xt:menu-marker target="slide-choice"/>
+        </div>                                                 
+        <div class="repetition-menu">
+          <xt:menu-marker/>
+        </div>        
+        <xt:use types="div header footer" param="name=slide-choice"/>
+      </div>
+    </xt:component>    
+    
+    <!-- HEADER slide -->
+
+    <xt:component name="header" i18n="header">
+      <p class="header">
+        <xt:attribute types="text" name="id" default="click to enter id"/>
+        <span style="margin-left: 2em">
+          <xt:attribute types="text" name="data-dur" option="unset" default="8"/> sec
+        </span>        
+      </p>          
+      <header>
+      <div class="content">
+        <h1><xt:use types="text" param="type=textarea;shape=parent" label="h1">Title</xt:use></h1>
+        <p><xt:use types="text" param="type=textarea;shape=parent" label="p">Summary</xt:use></p>
+        <xt:use types="t_header_index" label="ol"/>
+      </div>
+      </header>
+    </xt:component>
+    
+    <xt:component name="t_header_index" i18n="header">
+      <ol>                             
+        <xt:repeat minOccurs="1" maxOccurs="*" pseudoLabel="li">
+          <xt:use types="t_li" label="li"/>
+        </xt:repeat>
+      </ol>
+    </xt:component>    
+   
+    <!-- DIV slide -->
+    
+    <xt:component name="div" i18n="slide">             
+      <p class="header">
+        <xt:attribute types="text" name="id" default="click to enter id"/>
+        <span style="margin-left: 2em">
+          effect: 
+          <xt:attribute types="select" values="outline accordion progressive incremental" name="class" default="outline" option="unset"/>
+        </span>
+        <span style="margin-left: 2em">
+          <xt:attribute types="text" name="data-dur" option="unset" default="12"/> sec
+        </span>
+      </p>                  
+      <div class="content">
+        <h2><xt:use types="text" label="h2">Title</xt:use></h2>
+          <br/>
+          <xt:repeat minOccurs="1" maxOccurs="*" pseudoLabel="p ul ol">
+            <div style="clear:both; layout: float">
+              <xt:use types="t_content_row"/>
+            </div>
+          </xt:repeat>    
+      </div>
+    </xt:component>   
+
+    <xt:component name="t_content_row">  
+      <div class="content-row-menu" style="float:left; width:80px">        
+        <xt:menu-marker target="content-choice"/>                  
+        <span class="repeat-buttons"><xt:menu-marker/></span>
+      </div>
+      <div style="margin-left: 90px">
+        <xt:use types="ul ol p" param="name=content-choice"/>
+      </div>
+    </xt:component>    
+    
+    <xt:component name="p">  
+      <p class="level1">
+        <xt:use types="text" param="type=textarea;shape=parent;filter=wiki;wiki_lang=html">click to edit paragraph</xt:use><xt:menu-marker/></p>
+    </xt:component>    
+
+    <xt:component name="ul">                                                                                    
+      <ul class="level1">    
+        <xt:repeat minOccurs="1" maxOccurs="*" pseudoLabel="li">
+          <li class="itemContainer">
+            <xt:use types="list_item" label="li"/>
+          </li>
+        </xt:repeat>    
+      </ul>
+    </xt:component>           
+    
+    <xt:component name="ol">  
+      <ol class="level1">
+        <xt:repeat minOccurs="1" maxOccurs="*" pseudoLabel="li">
+          <li class="itemContainer">
+            <xt:use types="list_item" label="li"/>
+          </li>
+        </xt:repeat>    
+      </ol>
+    </xt:component>    
+    
+    <xt:component name="list_item">  
+        <p class="template" style="margin:0"><span class="hover-menu" style="position:absolute; top: -1.2em; left: 0; background: yellow">
+          <xt:menu-marker/>
+        </span><xt:use types="text" label="span" param="type=textarea;shape=parent-10px;filter=wiki;wiki_lang=html">click to edit item textual content</xt:use></p>
+        <xt:use types="t_optional"/>
+    </xt:component>                 
+                           
+    <!-- TRICK: component only necessary so that xt:menu-marker with target
+         is substituted with the select from the corresponding xt:use
+         during finishComponentGeneration() ! -->
+    <xt:component name="t_optional">  
+      <xt:repeat minOccurs="0" maxOccurs="1" pseudoLabel="p ul">
+        <span class="hover-menu repeat-buttons-container" style="background: yellow">
+          <xt:menu-marker/>
+          <xt:menu-marker target="list-choice"/>
+        </span>
+        <div class="xtt-hide-if-unselect" style="margin-left: 40px">
+          <xt:use types="t_p t_ul" param="name=list-choice" label="p ul"/> 
+        </div>
+      </xt:repeat>    
+    </xt:component>  
+    
+    <xt:component name="t_p" i18n="p">  
+      <p class="level2">
+        <xt:use types="text" param="type=textarea;shape=parent;filter=wiki;wiki_lang=html">click to edit paragraph</xt:use></p>
+    </xt:component>    
+     
+
+    <!-- AXEL currently does not allow recursive definitions, hence we can not reuse "ul" -->
+    <xt:component name="t_ul" i18n="ul">                                                                                    
+      <ul>
+        <xt:repeat minOccurs="1" maxOccurs="*" pseudoLabel="li">
+          <xt:use types="t_li" label="li"/>
+        </xt:repeat>    
+      </ul>
+    </xt:component>    
+    
+    <!-- FOOTER slide -->
+    
+    <xt:component name="footer" i18n="footer">             
+      <p class="header">
+        <xt:attribute types="text" name="id">slide id</xt:attribute>
+      </p>                  
+      <div class="content">
+        <p>TO BE DONE</p>
+      </div>
+    </xt:component>    
+    
+    <!-- SHARED components -->
+    
+    <xt:component name="t_li" i18n="li">  
+      <li><xt:use types="text" param="type=textarea;shape=parent-70px;;filter=wiki;wiki_lang=html">click to edit item textual content</xt:use><span class="li-repeat-buttons"><xt:menu-marker/></span></li>
+    </xt:component>    
+  
+  </xt:head>
+
+  <link rel="stylesheet" type="text/css" href="Preview.css" />  
+  <link rel="stylesheet" type="text/css" href="slideshow.css" />
+  <link rel="stylesheet" type="text/css" href="layout.css" />
+</head>
+<body> 
+  <xt:repeat minOccurs="1" maxOccurs="*" pseudoLabel="header div footer">
+    <xt:use types="t_slide"/>
+  </xt:repeat> 
+</body>
+</html>               
