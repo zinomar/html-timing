@@ -27,7 +27,10 @@
     function stopAudio() { }
     function playVideo() { }
     function stopVideo() { }
-  </script>
+  </script>     
+  <script type="text/javascript">
+    document.autoStartSlideShow();
+  </script>                         
 </head>
 <body class="crossfade">
   <nav data-timecontainer="par" data-timeaction="visibility">
@@ -50,7 +53,7 @@
           data-next          = "next.click"
           data-last          = "last.click">
 
-    <header id="part1">
+    <header id="part1" data-dur="2s">
       <h1> HTML Timing </h1>
       <p>
         A declarative approach for HTML Timing using SMIL/Timesheets.

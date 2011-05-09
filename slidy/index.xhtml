@@ -11,12 +11,12 @@
 
       <!-- Slideshow Navigation -->
       <smil:seq timeAction="display" prev="prev.click" next="next.click">
-        <smil:item select="body > div" />
+        <smil:item select="body > div" dur="2"/>
       </smil:seq>
 
       <!-- Outline Lists -->
       <smil:par timeAction="class:active">
-        <smil:item select=".outline > li" begin="click" end="click" />
+        <smil:item select=".outline > ol > li" begin="click" end="click" />
       </smil:par>
 
       <!-- Accordion Lists -->
@@ -44,7 +44,10 @@
   <!--[if lt IE 9]>
     <script type="text/javascript" src="../3rd-part/sizzle.js"></script>
   <![endif]-->
-  <script type="text/javascript" src="../timesheets.js"></script>
+  <script type="text/javascript" src="../timesheets.js"></script>   
+  <script type="text/javascript">
+    document.autoStartSlideShow();
+  </script>                       
 </head>
 <body>
   <nav>
@@ -52,9 +55,9 @@
     <button id="next"> next » </button>
   </nav>
 
-  <div>
+  <div class="outline">
     <h2> Folding </h2>
-    <ul class="outline">
+    <ol>
       <li>Topic 1 <small>(collapsed by default)</small>
         <ul>
           <li> subtopic a </li>
@@ -73,7 +76,8 @@
           <li> subtopic f </li>
         </ul>
       </li>
-    </ul>
+      <li>Topic 4 <small>(no children)</small></li>
+    </ol>
   </div>
 
   <div>
