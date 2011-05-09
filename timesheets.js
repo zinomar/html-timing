@@ -23,8 +23,8 @@
  * author      : Fabien Cazenave (:kaze)
  * contact     : fabien.cazenave@inria.fr, kaze@kompozer.net
  * license     : MIT
- * version     : 0.5.0pre
- * last change : 2011-04-24
+ * version     : 0.5.0
+ * last change : 2011-05-05
  *
  * TODO:
  *  - factorize the onbegin/onend code
@@ -425,7 +425,7 @@
     selectTimeContainers : qweryTimeContainers,
     selectExtTimesheets  : qweryExtTimesheets,
     supported            : gSupported,
-    native               : gNative
+    nativeSelector       : gNative
   };
 })();
 
@@ -944,7 +944,7 @@ function smilInternalTimer(timerate) {
     }
   };  
 }
-
+/*
 function _smilExternalTimer(mediaPlayerNode) {
   var self = this;
   this.onTimeUpdate = null;
@@ -1009,6 +1009,7 @@ function _smilExternalTimer(mediaPlayerNode) {
     // FIXME: to be done
   };  
 }
+*/
 function smilExternalTimer(mediaPlayerNode) {
   var self = this;
   var currentTime = NaN;
@@ -1126,8 +1127,8 @@ smilTimeItem.prototype.parseTime = function(timeStr) {
   } else return timeStr; // unsupported time format -- maybe a DOM event?
                          // note that isNaN("string") returns true
 };
-smilTimeItem.prototype.parseEvent = function(eventStr, callback, memo) { // XXX to be removed
-  var key;   
+/*
+smilTimeItem.prototype.parseEvent = function(eventStr, callback) { // XXX to be removed
   if (!eventStr || !eventStr.length) return null;
 
   // TODO: look for "+" in eventStr and handle the time offset
@@ -1150,7 +1151,8 @@ smilTimeItem.prototype.parseEvent = function(eventStr, callback, memo) { // XXX 
   }
   return target;
 };
-smilTimeItem.prototype.parseEvents = function(eventStr, callback) {
+*/
+smilTimeItem.prototype.parseEvents = function(eventStr, callback, memo) {
   var events = [];
   if (!eventStr || !eventStr.length || !isNaN(eventStr))
     return events;
@@ -1172,6 +1174,12 @@ smilTimeItem.prototype.parseEvents = function(eventStr, callback) {
       target : target,
       event  : evt
     });
+    if (callback) {
+      EVENTS.bind(target, evt, callback);
+      if (memo) {
+        memo.push([target, evt, callback]);
+      }      
+    }
   }
   return events;
 };
@@ -1324,16 +1332,19 @@ smilTimeItem.prototype.removeEventListener = function(events, callback) {
 };
 smilTimeItem.prototype.dispatchEvent = function(eventType) {
   var func = this["on" + eventType];
-  EVENTS.trigger(this.target, eventType);
+  //EVENTS.trigger(this.target, eventType);
+  EVENTS.trigger(this.parentTarget, eventType);
   if (func)
-    func.call(this.target);
-};     
+    //func.call(this.target);
+    func.call(this.parentTarget);
+};
+
 // Constructor: should not be called directly (see smilTimeElement)
 // unless you just want to check SMIL attributes.
 function smilTimeItem(domNode, parentNode, targetNode) {
   var self = this;
   this.parseTime      = smilTimeItem.prototype.parseTime;
-  this.parseEvent     = smilTimeItem.prototype.parseEvent;
+  //this.parseEvent     = smilTimeItem.prototype.parseEvent;
   this.parseEvents    = smilTimeItem.prototype.parseEvents;
   this.parseAttribute = smilTimeItem.prototype.parseAttribute;
 
@@ -1342,15 +1353,26 @@ function smilTimeItem(domNode, parentNode, targetNode) {
   this.nextSibling     = null;
   this.timeNodes       = null; // new Array()
 
+  /** SMIL Targets:
+    * .getNode()    = DOM or SMIL node
+    *                 used internally, should not be exposed
+    * .target       = DOM target carrying the 'smil' attribute
+    *                 can be different from domNode for <item> elements
+    * .parentTarget = DOM target used by event handlers
+    *                 can be different from .target for time containers
+    */
   this.getNode = function() { return domNode; };
   this.target  = targetNode || domNode;
-  //if (/^(par|seq|excl)$/i.test(this.target.nodeName))
+  // XXX dirty hack: no 'smil' attribute for time container targets
+  //     I can't remember what lead to this (OLDIE?) but it's required...
   if (/^(smil:){0,1}(par|seq|excl)$/i.test(this.target.nodeName))
-    this.target = null; // dirty hack for OLDIE (XXX only for OLDIE?)
-  this.parentTarget = targetNode
-    || (this.parentNode ? this.parentNode.target : null);
-  //if (/^(smil:){0,1}(par|seq|excl)$/i.test(this.parentTarget.nodeName))
-    //this.parentTarget = null;
+    this.target = null;
+  this.parentTarget = this.target;
+  var node = this.parentNode;
+  while (!this.parentTarget && node) {
+    this.parentTarget = node.target;
+    node = node.parentNode;
+  }
 
   // http://www.w3.org/TR/SMIL3/smil-timing.html#Timing-IntegrationAttributes
   var timeAction = parentNode ? parentNode.timeAction : "intrinsic";
@@ -1601,6 +1623,7 @@ smilTimeContainer_generic.prototype.getMediaSync = function(syncMasterNode) {
 // <seq|excl> time containers can only show one item at a time,
 // so we can use a 'currentIndex' property for these two containers.
 smilTimeContainer_generic.prototype.currentIndex = -1;
+/*
 smilTimeContainer_generic.prototype.checkIndex = function(index) {
   // update the state of first|prev|next|last targets
   // XXX should be in the onTimeUpdate prototypes, too
@@ -1619,6 +1642,7 @@ smilTimeContainer_generic.prototype.checkIndex = function(index) {
   if (this.last && !this.last.timing)
     this.last.setAttribute("smil", state);
 };
+*/
 smilTimeContainer_generic.prototype.selectIndex = function(index) {
   // FIXME handle integer values of repeatCount
   if (this.repeatCount == Infinity)
@@ -1647,10 +1671,14 @@ smilTimeContainer_generic.prototype.selectIndex = function(index) {
       this.timeNodes[i].hide();
     for (i = index + 1; i < this.timeNodes.length; i++)
       this.timeNodes[i].reset();
+
+    // fire event
+    //EVENTS.trigger(this.parentTarget, "change");
+    this.dispatchEvent("change");
     consoleLog("new index: " + this.currentIndex);
 
     // update the target state of first|prev|next|last
-    this.checkIndex();
+    //this.checkIndex();
   }
 };
 smilTimeContainer_generic.prototype.selectItem = function(item) {
@@ -1863,9 +1891,9 @@ function smilTimeContainer_par(domNode, parentNode, timerate) {
 
   // index management is not available on <par> containers
   this.currentIndex = -1;
-  this.checkIndex  = function(index){};
-  this.selectIndex = function(index){};
-  this.selectItem  = function(item){
+  //this.checkIndex  = function(index){};
+  this.selectIndex = function(index) {};
+  this.selectItem  = function(item) {
     if (!isNaN(item.time_in))
       this.setCurrentTime(item.time_in);
     item.show();
@@ -1965,7 +1993,7 @@ smilTimeContainer_excl.prototype.onTimeUpdate = function() {
   // show the next active item
   if (index >= 0) {
     this.currentIndex = index;
-    this.checkIndex();
+    //this.checkIndex();
     //consoleLog("timeSync_seq, new index: " + index);
   }
   else if ((this.currentIndex < this.timeNodes.length - 1)
@@ -1991,24 +2019,23 @@ function smilTimeContainer_excl(domNode, parentNode, timerate) {
   this.currentIndex = -1;
   if (this.timeNodes.length && (this.timeNodes[0].time_in <= 0))
     this.currentIndex = 0; // XXX hack for the 'audio.xhtml' demo with Firefox
-  this.checkIndex  = smilTimeContainer_generic.prototype.checkIndex;
+  //this.checkIndex  = smilTimeContainer_generic.prototype.checkIndex;
   this.selectIndex = smilTimeContainer_generic.prototype.selectIndex;
   this.selectItem  = smilTimeContainer_generic.prototype.selectItem;
 
   // lazy user interaction
-  this.first = this.parseEvent(this.parseAttribute("first"), function() {
+  this.parseEvents(this.parseAttribute("first"), function() {
     self.selectIndex(0);
   });
-  this.prev = this.parseEvent(this.parseAttribute("prev"),  function() {
+  this.parseEvents(this.parseAttribute("prev"),  function() {
     self.selectIndex(self.currentIndex - 1);
   });
-  this.next = this.parseEvent(this.parseAttribute("next"),  function() {
+  this.parseEvents(this.parseAttribute("next"),  function() {
     self.selectIndex(self.currentIndex + 1);
   });
-  this.last = this.parseEvent(this.parseAttribute("last"),  function() {
+  this.parseEvents(this.parseAttribute("last"),  function() {
     self.selectIndex(self.timeNodes.length - 1);
   });
-  this.checkIndex();
 }
 
 
@@ -2088,7 +2115,7 @@ smilTimeContainer_seq.prototype.onTimeUpdate = function() {
     if ((time_in >= Infinity) || !outOfBounds) {
       this.currentIndex++;
       this.timeNodes[this.currentIndex].show();
-      this.checkIndex();
+      //this.checkIndex();
       return;
     }
   }
@@ -2119,7 +2146,7 @@ smilTimeContainer_seq.prototype.onTimeUpdate = function() {
   // show the next active item
   if (index >= 0) {
     this.currentIndex = index;
-    this.checkIndex();
+    //this.checkIndex();
     //consoleLog("timeSync_seq, new index: " + index);
   }
   else if ((this.currentIndex < this.timeNodes.length - 1)
@@ -2150,26 +2177,25 @@ function smilTimeContainer_seq(domNode, parentNode, timerate) {
   this.currentIndex = -1;
   if (this.timeNodes.length && (this.timeNodes[0].time_in <= 0))
     this.currentIndex = 0; // XXX hack for the 'audio.xhtml' demo with Firefox
-  this.checkIndex  = smilTimeContainer_generic.prototype.checkIndex;
+  //this.checkIndex  = smilTimeContainer_generic.prototype.checkIndex;
   this.selectIndex = smilTimeContainer_generic.prototype.selectIndex;
   this.selectItem  = smilTimeContainer_generic.prototype.selectItem;
 
   // lazy user interaction (should be specific to <excl> but heck...)
   this.bindings = [];
-  this.first = this.parseEvent(this.parseAttribute("first"), function() {
+  this.parseEvents(this.parseAttribute("first"), function() {
     self.selectIndex(0);
   }, this.bindings);
-  this.prev = this.parseEvent(this.parseAttribute("prev"),  function() {
+  this.parseEvents(this.parseAttribute("prev"),  function() {
     self.selectIndex(self.currentIndex - 1);
   }, this.bindings);
-  this.next = this.parseEvent(this.parseAttribute("next"),  function() {
+  this.parseEvents(this.parseAttribute("next"),  function() {
     self.selectIndex(self.currentIndex + 1);
   }, this.bindings);
-  this.last = this.parseEvent(this.parseAttribute("last"),  function() {
+  this.parseEvents(this.parseAttribute("last"),  function() {
     self.selectIndex(self.timeNodes.length - 1);
   }, this.bindings);
-  this.checkIndex();
-}           
+}
 
 /*****************************************************************************\
 |                                                                             |
@@ -2186,7 +2212,7 @@ function smilTimeContainer_seq(domNode, parentNode, timerate) {
 function smilTimeElement(domNode, parentNode, targetNode, timerate) {
   //targetNode = targetNode || parentNode.target;
   //if (domNode.timing) consoleLog(domNode.nodeName + " is already intialized.");
-  smilTimeItem.call(this, domNode, parentNode, targetNode);
+  smilTimeItem.call(this, domNode, parentNode, targetNode || domNode);
   //this.target = targetNode || parentNode.target;
   switch (this.timeContainer) {
     case "par":
