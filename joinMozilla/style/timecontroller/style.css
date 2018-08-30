@@ -1,6 +1,6 @@
 /* default: 320*32px, gray */
 .smil-controlBar {
-  width: 320px;
+  /*width: 320px;*/
   color: white;
   background-color: #555;
   user-select         : none;
