@@ -37,7 +37,7 @@ body > div {
 }
 
 #slideshow > * {
-  position: absolute;
+  /*position: absolute;*/
   top: 0;
   left: 130px;
   transition         : all 1s;
