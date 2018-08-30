@@ -1,8 +1,9 @@
 .smil-controlBar {
   position: absolute;
-  left: 130px;
-  top: 500px;
-  width: 640px;
+  left: 15%;
+  right: 15%
+  /*top: 500px;*/
+  width: 70%;
   z-index: 2;
 }
 .smil-timeSegments a span {
