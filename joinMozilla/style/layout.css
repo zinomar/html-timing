@@ -3,8 +3,8 @@
 #slideshow header,
 #slideshow footer,
 #slideshow div {
-  width: 560px;
-  height: 440px;
+  width: auto;
+  height: auto;
   padding: 20px 40px;
   /*overflow-x: hidden;*/
   background-color: white;
